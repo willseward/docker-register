@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 
 import etcd
@@ -23,20 +22,16 @@ try:
 except KeyError:
     client.write("/backends", None, dir=True)
 
-{{ $local := . }}
+{{ $local := .Env.HOST_IP }}
 {{range $key, $value := .}}
 {{ $addrLen := len $value.Addresses }}
-{{ if eq $addrLen 1 }}
-{{ with $address := index $value.Addresses 0 }}
-
-{{ if $address.HostPort}}
-# {{ $value.Name }}
-
-client.write("/backends/{{ $value.Image.Repository}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local.Env.HOST_IP }}:{{ $address.HostPort }}", ttl=15)
+{{ if gt $addrLen 0 }}
+{{ range $address := $value.Addresses }}
+{{ if ne $address.HostPort ""}}
+client.write("/backends/{{ $value.Image.Repository}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local }}:{{ $address.HostPort }}", ttl=15)
 client.write("/backends/{{ $value.Image.Repository}}/port", "{{ $address.Port }}", ttl=15)
 client.write("/backends/{{ $value.Image.Repository}}/dns", "{{ $value.Image.Repository }}", ttl=15)
-
-{{ end }}
-{{ end }}
+{{end}}
+{{end}}
 {{end}}
 {{end}}
