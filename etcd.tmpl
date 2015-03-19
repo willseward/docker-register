@@ -23,6 +23,7 @@ except KeyError:
     client.write("/backends", None, dir=True)
 
 {{ $local := .Env.HOST_IP }}
+{{ $dns := .Env.Host_Names }}
 {{range $key, $value := .}}
 {{ $addrLen := len $value.Addresses }}
 {{ if gt $addrLen 0 }}
@@ -30,7 +31,7 @@ except KeyError:
 {{ if ne $address.HostPort ""}}
 client.write("/backends/{{ $value.Image.Repository}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local }}:{{ $address.HostPort }}", ttl=15)
 client.write("/backends/{{ $value.Image.Repository}}/port", "{{ $address.Port }}", ttl=15)
-client.write("/backends/{{ $value.Image.Repository}}/dns", "{{ $value.Image.Repository }}", ttl=15)
+client.write("/backends/{{ $value.Image.Repository}}/dns", "{{ $dns }}", ttl=15)
 {{end}}
 {{end}}
 {{end}}
