@@ -3,6 +3,7 @@ Description=docker-register
 After=docker.service
 
 [Service]
+User=core
 EnvironmentFile=/etc/environment
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill docker-register
@@ -13,3 +14,6 @@ ExecStop=/usr/bin/docker stop docker-register
 
 [X-Fleet]
 Global=true
+
+[Install]
+WantedBy=multi-user.target
