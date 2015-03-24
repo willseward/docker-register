@@ -23,8 +23,8 @@ except KeyError:
     client.write("/backends", None, dir=True)
 
 {{ $local := .Env.HOST_IP }}
-{{ $dns := .Env.Host_Names }}
 {{range $key, $value := .}}
+{{ $dns := $value.Env.HOST_NAMES }}
 {{ $addrLen := len $value.Addresses }}
 {{ if gt $addrLen 0 }}
 {{ range $address := $value.Addresses }}
